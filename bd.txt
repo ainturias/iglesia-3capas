@@ -1,0 +1,55 @@
+CREATE TABLE miembro (
+    id_miembro INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    ci VARCHAR(20) NOT NULL UNIQUE,
+    fecha_nacimiento DATE NOT NULL,
+    direccion VARCHAR(150),
+    telefono VARCHAR(20),
+    correo VARCHAR(100),
+    fecha_registro DATE NOT NULL,
+    estado ENUM('activo', 'inactivo') DEFAULT 'activo'
+);
+
+-- Tabla de cursos
+CREATE TABLE curso (
+    id_curso INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion TEXT,
+    nivel VARCHAR(50),
+    fecha_inicio DATE,
+    fecha_fin DATE
+);
+
+-- Tabla de ministerios
+CREATE TABLE ministerio (
+    id_ministerio INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion TEXT,
+    fecha_creacion DATE
+);
+
+-- Tabla intermedia: miembro - curso
+CREATE TABLE curso_miembro (
+    id_miembro INT,
+    id_curso INT,
+    nota DECIMAL(5,2),
+    fecha_inscripcion DATE,
+    PRIMARY KEY (id_miembro, id_curso),
+    FOREIGN KEY (id_miembro) REFERENCES miembro(id_miembro),
+    FOREIGN KEY (id_curso) REFERENCES curso(id_curso)
+);
+
+-- Tabla intermedia: miembro - ministerio
+CREATE TABLE miembro_ministerio (
+    id_miembro INT,
+    id_ministerio INT,
+    fecha_ingreso DATE,
+    PRIMARY KEY (id_miembro, id_ministerio),
+    FOREIGN KEY (id_miembro) REFERENCES miembro(id_miembro),
+    FOREIGN KEY (id_ministerio) REFERENCES ministerio(id_ministerio)
+);
+
+
+
+

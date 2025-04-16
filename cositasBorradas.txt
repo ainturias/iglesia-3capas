@@ -1,0 +1,21 @@
+    <h2>Miembros Registrados</h2>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>CI</th>
+            <th>Correo</th>
+            <th>Acciones</th>
+        </tr>
+        <?php foreach ($miembros as $m): ?>
+            <tr>
+                <td><?= $m['id_miembro'] ?></td>
+                <td><?= $m['nombre'] . ' ' . $m['apellido'] ?></td>
+                <td><?= $m['ci'] ?></td>
+                <td><?= $m['correo'] ?></td>
+                <td>
+                    <a href="?eliminar=<?= $m['id_miembro'] ?>" onclick="return confirm('¿Eliminar?')">Eliminar</a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
