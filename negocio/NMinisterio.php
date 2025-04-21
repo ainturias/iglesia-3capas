@@ -1,11 +1,11 @@
 <?php
-require_once(__DIR__ . '/../datos/MinisterioDAO.php');
+require_once(__DIR__ . '/../datos/DMinisterio.php');
 
-class GestorMinisterio {
+class NMinisterio {
     private $dao;
 
     public function __construct() {
-        $this->dao = new MinisterioDAO();
+        $this->dao = new DMinisterio();
     }
 
     public function listarMinisterios() {

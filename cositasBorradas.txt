@@ -19,3 +19,233 @@
             </tr>
         <?php endforeach; ?>
     </table>
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+public function registrarMiembro($data) {
+        // Validar campos obligatorios
+        if (empty($data['nombre']) || empty($data['apellido']) || empty($data['ci']) || empty($data['fecha_nacimiento'])) {
+            return "Faltan datos obligatorios.";
+        }
+
+        // Crear array con los datos
+        $miembro = [
+            'nombre' => $data['nombre'],
+            'apellido' => $data['apellido'],
+            'ci' => $data['ci'],
+            'fecha_nacimiento' => $data['fecha_nacimiento'],
+            'direccion' => $data['direccion'] ?? null,
+            'telefono' => $data['telefono'] ?? null,
+            'correo' => $data['correo'] ?? null,
+            'fecha_registro' => date('Y-m-d')
+        ];
+
+        // Insertar
+        $exito = $this->dao->insertar($miembro);
+        return $exito ? "Miembro registrado correctamente." : "Error al registrar miembro.";
+    }
+-----------------------------------------------------------------------------------------------------------------------------
+<?php
+require_once(__DIR__ . '/../negocio/GestorMiembro.php');
+require_once(__DIR__ . '/../negocio/GestorCurso.php');
+require_once(__DIR__ . '/../negocio/GestorMinisterio.php');
+
+// Para usar la barra de navegación y el encabezado
+require_once('../includes/head.php');
+require_once('../includes/navbar.php');
+
+$gestor = new NMiembro();
+$gestorCurso = new GestorCurso();
+$gestorMinisterio = new GestorMinisterio();
+$mensaje = "";
+
+// Registrar nuevo miembro
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $mensaje = $gestor->registrarMiembro($_POST);
+    header("Location: miembrosForm.php?msg=" . urlencode($mensaje));
+    exit;
+}
+
+
+// Eliminar miembro
+if (isset($_GET['eliminar'])) {
+    $gestor->eliminarMiembro($_GET['eliminar']);
+    header("Location: miembrosForm.php"); // Evita reenvío por GET
+    exit;
+}
+
+// Obtener todos los miembros
+$miembros = $gestor->listarMiembros();
+
+// Obtener cursos y ministerios
+$cursos = $gestorCurso->listarCursos();
+$ministerios = $gestorMinisterio->listarMinisterios();
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Miembros</title>
+</head>
+
+<body>
+    <h1>Gestión de Miembros</h1>
+
+    <?php if (isset($_GET['msg'])): ?>
+        <p><strong><?= htmlspecialchars($_GET['msg']) ?></strong></p>
+    <?php endif; ?>
+
+    <form method="POST">
+        <label>Nombre: <input type="text" name="nombre" required></label><br>
+        <label>Apellido: <input type="text" name="apellido" required></label><br>
+        <label>CI: <input type="text" name="ci" required></label><br>
+        <label>Fecha Nacimiento: <input type="date" name="fecha_nacimiento" required></label><br>
+        <label>Dirección: <input type="text" name="direccion"></label><br>
+        <label>Teléfono: <input type="text" name="telefono"></label><br>
+        <label>Correo: <input type="email" name="correo"></label><br>
+        <label>Curso:
+            <select name="id_curso">
+                <option value="">-- Selecciona un curso --</option>
+                <?php foreach ($cursos as $curso): ?>
+                    <option value="<?= $curso['id_curso'] ?>"><?= $curso['nombre'] ?></option>
+                <?php endforeach; ?>
+            </select>
+        </label><br>
+
+        <label>Ministerio:
+            <select name="id_ministerio">
+                <option value="">-- Selecciona un ministerio --</option>
+                <?php foreach ($ministerios as $min): ?>
+                    <option value="<?= $min['id_ministerio'] ?>"><?= $min['nombre'] ?></option>
+                <?php endforeach; ?>
+            </select>
+        </label><br>
+
+        <button type="submit">Registrar Miembro</button>
+    </form>
+
+    <h2>Miembros Registrados</h2>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>CI</th>
+        <th>Fecha Nacimiento</th>
+        <th>Dirección</th>
+        <th>Teléfono</th>
+        <th>Correo</th>
+        <th>Fecha Registro</th>
+        <th>Estado</th>
+        <th>Curso</th>
+        <th>Ministerio</th>
+        <th>Acciones</th>
+    </tr>
+    <?php foreach ($miembros as $m): ?>
+        <tr>
+            <td><?= $m['id_miembro'] ?></td>
+            <td><?= $m['nombre'] ?></td>
+            <td><?= $m['apellido'] ?></td>
+            <td><?= $m['ci'] ?></td>
+            <td><?= $m['fecha_nacimiento'] ?></td>
+            <td><?= $m['direccion'] ?></td>
+            <td><?= $m['telefono'] ?></td>
+            <td><?= $m['correo'] ?></td>
+            <td><?= $m['fecha_registro'] ?></td>
+            <td><?= $m['estado'] ?></td>
+            <td><?= $m['curso_nombre'] ?? '—' ?></td>
+            <td><?= $m['ministerio_nombre'] ?? '—' ?></td>
+            <td>
+                <a href="?eliminar=<?= $m['id_miembro'] ?>" onclick="return confirm('¿Eliminar?')">Eliminar</a>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+</table>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+<?php
+require_once(__DIR__ . '/../datos/DMiembro.php');
+require_once(__DIR__ . '/../datos/CursoMiembroDAO.php');
+require_once(__DIR__ . '/../datos/MiembroMinisterioDAO.php');
+
+class NMiembro {
+    private $dao;
+
+    public function __construct() {
+        $this->dao = new DMiembro();
+    }
+
+    public function registrarMiembro($data) {
+        if (empty($data['nombre']) || empty($data['apellido']) || empty($data['ci']) || empty($data['fecha_nacimiento'])) {
+            return "Faltan datos obligatorios.";
+        }
+    
+        $miembro = [
+            'nombre' => $data['nombre'],
+            'apellido' => $data['apellido'],
+            'ci' => $data['ci'],
+            'fecha_nacimiento' => $data['fecha_nacimiento'],
+            'direccion' => $data['direccion'] ?? null,
+            'telefono' => $data['telefono'] ?? null,
+            'correo' => $data['correo'] ?? null,
+            'fecha_registro' => date('Y-m-d')
+        ];
+    
+        $idMiembro = $this->dao->insertarYRetornarID($miembro); // cambio aquí
+    
+        if (!$idMiembro) {
+            return "Error al registrar miembro.";
+        }
+    
+        // Registrar curso_miembro si se seleccionó
+        if (!empty($data['id_curso'])) {
+            $cursoDAO = new CursoMiembroDAO();
+            $cursoDAO->asignarCurso($idMiembro, $data['id_curso'], date('Y-m-d'), 0);
+        }
+    
+        // Registrar miembro_ministerio si se seleccionó
+        if (!empty($data['id_ministerio'])) {
+            $ministerioDAO = new MiembroMinisterioDAO();
+            $ministerioDAO->asignarMinisterio($idMiembro, $data['id_ministerio'], date('Y-m-d'));
+        }
+    
+        return "Miembro registrado correctamente.";
+    }
+
+    public function eliminarMiembro($id) {
+        return $this->dao->eliminar($id);
+    }
+
+    // public function listarMiembros() {
+    //     return $this->dao->listarTodos();
+    // }
+
+    public function listarMiembros() {
+        return $this->dao->listarConCursoYMinisterio();
+    }
+    
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

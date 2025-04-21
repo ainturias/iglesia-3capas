@@ -29,18 +29,17 @@ CREATE TABLE ministerio (
     fecha_creacion DATE
 );
 
--- Tabla intermedia: miembro - curso
 CREATE TABLE curso_miembro (
     id_miembro INT,
     id_curso INT,
     nota DECIMAL(5,2),
-    fecha_inscripcion DATE,
+    fecha_inscripcion DATE, -- sin default
+    estado ENUM('pendiente', 'aprobado', 'reprobado') DEFAULT 'pendiente',
     PRIMARY KEY (id_miembro, id_curso),
-    FOREIGN KEY (id_miembro) REFERENCES miembro(id_miembro),
-    FOREIGN KEY (id_curso) REFERENCES curso(id_curso)
+    FOREIGN KEY (id_miembro) REFERENCES miembro(id_miembro) ON DELETE CASCADE,
+    FOREIGN KEY (id_curso) REFERENCES curso(id_curso) ON DELETE CASCADE
 );
 
--- Tabla intermedia: miembro - ministerio
 CREATE TABLE miembro_ministerio (
     id_miembro INT,
     id_ministerio INT,
@@ -50,6 +49,29 @@ CREATE TABLE miembro_ministerio (
     FOREIGN KEY (id_ministerio) REFERENCES ministerio(id_ministerio)
 );
 
+CREATE TABLE membresia (
+    id_membresia INT AUTO_INCREMENT PRIMARY KEY,
+    tipo VARCHAR(50) NOT NULL,
+    fecha_inicio DATE NOT NULL,
+    fecha_fin DATE,
+    estado ENUM('activa', 'inactiva') DEFAULT 'activa',
+    id_miembro INT NOT NULL,
+    FOREIGN KEY (id_miembro) REFERENCES miembro(id_miembro) ON DELETE CASCADE
+);
 
+----------------------------------------- INSERTS -------------------------------------------------------------
+INSERT INTO miembro (nombre, apellido, ci, fecha_nacimiento, direccion, telefono, correo, fecha_registro, estado) VALUES
+('Alan', 'Romero', '1234567', '1995-04-12', 'Av. Siempre Viva 123', '78965412', 'alan.romero@mail.com', CURDATE(), 'activo'),
+('Jimena', 'Lima', '2345678', '1998-06-22', 'Calle del Sol 456', '78912345', 'jimena.lima@mail.com', CURDATE(), 'activo'),
+('Daniel', 'Barrios', '3456789', '1990-01-30', 'Barrio Central 789', '74589632', 'daniel.barrios@mail.com', CURDATE(), 'activo'),
+('Roxana', 'Molina', '4567890', '1992-10-15', 'Zona Norte 321', '73456123', 'roxana.molina@mail.com', CURDATE(), 'activo'),
+('Miguel', 'Mercado', '5678901', '1988-03-08', 'Villa Esperanza 654', '71234987', 'miguel.mercado@mail.com', CURDATE(), 'inactivo');
 
+INSERT INTO curso (nombre, descripcion, nivel, fecha_inicio, fecha_fin) VALUES
+('Curso Bíblico 1', 'Introducción a la Biblia', 'Básico', '2024-01-10', '2024-03-15'),
+('Curso de Liderazgo', 'Formación de líderes', 'Avanzado', '2024-04-01', '2024-06-30');
+
+INSERT INTO ministerio (nombre, descripcion, fecha_creacion) VALUES
+('Música', 'Ministerio de alabanza y música', '2020-01-01'),
+('Oración', 'Grupo de intercesión y oración', '2021-02-15');
 
