@@ -8,7 +8,11 @@
             <ul class="navbar-nav">
                 <li class="nav-item"><a class="nav-link" href="/presentacion/PMiembro/PMiembroList.php">Miembros</a></li>
                 <li class="nav-item"><a class="nav-link" href="/presentacion/PCurso/PCursoList.php">Cursos</a></li>
-                <li class="nav-item"><a class="nav-link" href="PMinisterio.php">Ministerios</a></li>
+                <li class="nav-item"><a class="nav-link" href="/presentacion/PMinisterio/PMinisterioList.php">Ministerios</a></li>
+                <li class="nav-item"><a class="nav-link" href="/presentacion/PMembresia/">Membresía</a></li>
+                <li class="nav-item"><a class="nav-link" href="/presentacion/PMinisterio/PMinisterioList.php">Ministerios</a></li>
+                <li class="nav-item"><a class="nav-link" href="/presentacion/PMinisterio/PMinisterioList.php">Ministerios</a></li>
+                <li class="nav-item"><a class="nav-link" href="/presentacion/PMinisterio/PMinisterioList.php">Ministerios</a></li>
                 <!-- Más secciones si deseas -->
             </ul>
         </div>

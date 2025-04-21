@@ -45,9 +45,10 @@ CREATE TABLE miembro_ministerio (
     id_ministerio INT,
     fecha_ingreso DATE,
     PRIMARY KEY (id_miembro, id_ministerio),
-    FOREIGN KEY (id_miembro) REFERENCES miembro(id_miembro),
-    FOREIGN KEY (id_ministerio) REFERENCES ministerio(id_ministerio)
+    FOREIGN KEY (id_miembro) REFERENCES miembro(id_miembro) ON DELETE CASCADE,
+    FOREIGN KEY (id_ministerio) REFERENCES ministerio(id_ministerio) ON DELETE CASCADE
 );
+
 
 CREATE TABLE membresia (
     id_membresia INT AUTO_INCREMENT PRIMARY KEY,
@@ -58,7 +59,15 @@ CREATE TABLE membresia (
     id_miembro INT NOT NULL,
     FOREIGN KEY (id_miembro) REFERENCES miembro(id_miembro) ON DELETE CASCADE
 );
-
+----------------------------------------------------------------------
+CREATE TABLE miembro_ministerio (
+    id_miembro INT,
+    id_ministerio INT,
+    fecha_ingreso DATE,
+    PRIMARY KEY (id_miembro, id_ministerio),
+    FOREIGN KEY (id_miembro) REFERENCES miembro(id_miembro),
+    FOREIGN KEY (id_ministerio) REFERENCES ministerio(id_ministerio)
+);
 ----------------------------------------- INSERTS -------------------------------------------------------------
 INSERT INTO miembro (nombre, apellido, ci, fecha_nacimiento, direccion, telefono, correo, fecha_registro, estado) VALUES
 ('Alan', 'Romero', '1234567', '1995-04-12', 'Av. Siempre Viva 123', '78965412', 'alan.romero@mail.com', CURDATE(), 'activo'),
