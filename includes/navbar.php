@@ -9,11 +9,9 @@
                 <li class="nav-item"><a class="nav-link" href="/presentacion/PMiembro/PMiembroList.php">Miembros</a></li>
                 <li class="nav-item"><a class="nav-link" href="/presentacion/PCurso/PCursoList.php">Cursos</a></li>
                 <li class="nav-item"><a class="nav-link" href="/presentacion/PMinisterio/PMinisterioList.php">Ministerios</a></li>
-                <li class="nav-item"><a class="nav-link" href="/presentacion/PMembresia/">Membresía</a></li>
-                <li class="nav-item"><a class="nav-link" href="/presentacion/PMinisterio/PMinisterioList.php">Ministerios</a></li>
-                <li class="nav-item"><a class="nav-link" href="/presentacion/PMinisterio/PMinisterioList.php">Ministerios</a></li>
-                <li class="nav-item"><a class="nav-link" href="/presentacion/PMinisterio/PMinisterioList.php">Ministerios</a></li>
-                <!-- Más secciones si deseas -->
+                <li class="nav-item"><a class="nav-link" href="/presentacion/PMembresia/PMembresiaList.php">Membresía</a></li>
+                <li class="nav-item"><a class="nav-link" href="/presentacion/PMatrimonio/PMatrimonioList.php">Matrimonio</a></li>
+                <li class="nav-item"><a class="nav-link" href="/presentacion/PSacramento/PSacramentoList.php">Sacramentos</a></li>
             </ul>
         </div>
     </div>

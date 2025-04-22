@@ -38,7 +38,6 @@ class PCursoAsignar extends PBase
 
                 if ($_POST['accion'] === 'inscribir') {
                     $this->negocioCurso->asignarMiembro($idCurso, $idMiembro, $nota, date('Y-m-d'));
-                    //$this->negocioCurso->asignarMiembro($idCurso, $idMiembro);
                 } elseif ($_POST['accion'] === 'quitar') {
                     $this->negocioCurso->quitarMiembro($idCurso, $idMiembro);
                 } elseif ($_POST['accion'] === 'calificar' && is_numeric($nota)) {

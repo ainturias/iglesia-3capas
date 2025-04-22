@@ -3,139 +3,132 @@ require_once(__DIR__ . '/../conexion/Conexion.php');
 
 class DCurso
 {
-    private $conn;
+    private PDO $conn;
 
     public function __construct()
     {
         $this->conn = Conexion::obtenerConexion();
     }
 
-    // public function listar(): array
-    // {
-    //     $stmt = $this->conn->prepare("SELECT * FROM curso");
-    //     $stmt->execute();
-    //     return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    // }
-
+    // --- CRUD de Curso ---
     public function listar(): array
     {
-        $sql = "SELECT id_curso, nombre, descripcion, nivel, fecha_inicio, fecha_fin FROM curso";
+        $sql = "SELECT * FROM curso";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-
-    public function crear(array $datos): bool
-    {
-        $sql = "INSERT INTO curso (nombre, descripcion, nivel, fecha_inicio, fecha_fin) VALUES (?, ?, ?, ?, ?)";
-        $stmt = $this->conn->prepare($sql);
-        return $stmt->execute([
-            $datos['nombre'],
-            $datos['descripcion'],
-            $datos['nivel'],
-            $datos['fecha_inicio'],
-            $datos['fecha_fin']
-        ]);
-    }
-
     public function insertar(array $data): bool
     {
-        $sql = "INSERT INTO curso (nombre, descripcion, nivel, fecha_inicio, fecha_fin)
+        $sql = "INSERT INTO curso (nombre, descripcion, nivel, fecha_inicio, fecha_fin) 
                 VALUES (:nombre, :descripcion, :nivel, :fecha_inicio, :fecha_fin)";
         $stmt = $this->conn->prepare($sql);
-        return $stmt->execute($data);
-    }
-
-    // public function editar(int $id, array $data): bool
-    // {
-    //     $sql = "UPDATE curso SET nombre = :nombre, descripcion = :descripcion,
-    //             nivel = :nivel, fecha_inicio = :fecha_inicio, fecha_fin = :fecha_fin
-    //             WHERE id_curso = :id";
-    //     $stmt = $this->conn->prepare($sql);
-    //     $data['id'] = $id;
-    //     return $stmt->execute($data);
-    // }
-    public function editar(int $id, array $datos): bool
-    {
-        $sql = "UPDATE curso SET nombre = ?, descripcion = ?, nivel = ?, fecha_inicio = ?, fecha_fin = ? WHERE id_curso = ?";
-        $stmt = $this->conn->prepare($sql);
         return $stmt->execute([
-            $datos['nombre'],
-            $datos['descripcion'],
-            $datos['nivel'],
-            $datos['fecha_inicio'],
-            $datos['fecha_fin'],
-            $id
+            ':nombre' => $data['nombre'],
+            ':descripcion' => $data['descripcion'] ?? null,
+            ':nivel' => $data['nivel'] ?? null,
+            ':fecha_inicio' => $data['fecha_inicio'],
+            ':fecha_fin' => $data['fecha_fin']
         ]);
     }
 
+    public function editar(int $id, array $data): bool
+    {
+        $sql = "UPDATE curso SET nombre = :nombre, descripcion = :descripcion, nivel = :nivel, 
+                fecha_inicio = :fecha_inicio, fecha_fin = :fecha_fin WHERE id_curso = :id";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([
+            ':nombre' => $data['nombre'],
+            ':descripcion' => $data['descripcion'] ?? null,
+            ':nivel' => $data['nivel'] ?? null,
+            ':fecha_inicio' => $data['fecha_inicio'],
+            ':fecha_fin' => $data['fecha_fin'],
+            ':id' => $id
+        ]);
+    }
 
     public function eliminar(int $id): bool
     {
-        $stmt = $this->conn->prepare("DELETE FROM curso WHERE id_curso = ?");
-        return $stmt->execute([$id]);
+        $sql = "DELETE FROM curso WHERE id_curso = :id";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([':id' => $id]);
     }
 
     public function obtenerPorId(int $id): ?array
     {
-        $stmt = $this->conn->prepare("SELECT * FROM curso WHERE id_curso = ?");
-        $stmt->execute([$id]);
-        $curso = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $curso ?: null;
+        $sql = "SELECT * FROM curso WHERE id_curso = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        $res = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $res ?: null;
     }
 
+    // --- Lógica de curso_miembro ---
     public function obtenerMiembrosAsignados(int $idCurso): array
     {
-        $sql = "SELECT m.id_miembro, CONCAT(m.nombre, ' ', m.apellido) AS nombre,
-                       cm.nota, cm.fecha_inscripcion
+        $sql = "SELECT m.id_miembro, m.nombre, m.apellido, cm.nota, cm.fecha_inscripcion, cm.estado
                 FROM curso_miembro cm
-                JOIN miembro m ON cm.id_miembro = m.id_miembro
-                WHERE cm.id_curso = ?";
+                INNER JOIN miembro m ON cm.id_miembro = m.id_miembro
+                WHERE cm.id_curso = :id";
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$idCurso]);
+        $stmt->execute([':id' => $idCurso]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function asignarMiembro(int $idCurso, int $idMiembro): bool
-    {
-        // Validar si ya está inscrito
-        $sql = "SELECT * FROM curso_miembro WHERE id_curso = ? AND id_miembro = ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$idCurso, $idMiembro]);
-
-        if ($stmt->fetch()) {
-            return false; // Ya existe
-        }
-
-        $sql = "INSERT INTO curso_miembro (id_curso, id_miembro, fecha_inscripcion) VALUES (?, ?, NOW())";
-        $stmt = $this->conn->prepare($sql);
-        return $stmt->execute([$idCurso, $idMiembro]);
-    }
-
-    public function quitarMiembro(int $idCurso, int $idMiembro): bool
-    {
-        $sql = "DELETE FROM curso_miembro WHERE id_curso = ? AND id_miembro = ?";
-        $stmt = $this->conn->prepare($sql);
-        return $stmt->execute([$idCurso, $idMiembro]);
-    }
-
-    public function calificarMiembro(int $idCurso, int $idMiembro, float $nota): bool
-    {
-        $sql = "UPDATE curso_miembro SET nota = ? WHERE id_curso = ? AND id_miembro = ?";
-        $stmt = $this->conn->prepare($sql);
-        return $stmt->execute([$nota, $idCurso, $idMiembro]);
     }
 
     public function obtenerMiembrosNoAsignados(int $idCurso): array
     {
-        $sql = "SELECT m.id_miembro, CONCAT(m.nombre, ' ', m.apellido) AS nombre
+        $sql = "SELECT m.id_miembro, m.nombre, m.apellido 
                 FROM miembro m
                 WHERE m.id_miembro NOT IN (
-                    SELECT id_miembro FROM curso_miembro WHERE id_curso = ?
+                    SELECT id_miembro FROM curso_miembro WHERE id_curso = :id
                 )";
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$idCurso]);
+        $stmt->execute([':id' => $idCurso]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function asignarMiembro(int $idCurso, int $idMiembro, ?float $nota, string $fecha): bool
+    {
+        $estado = 'pendiente';
+        if (is_numeric($nota)) {
+            $estado = $nota >= 51 ? 'aprobado' : 'reprobado';
+        }
+
+        $sql = "INSERT INTO curso_miembro (id_miembro, id_curso, nota, fecha_inscripcion, estado)
+                VALUES (:id_miembro, :id_curso, :nota, :fecha, :estado)";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([
+            ':id_miembro' => $idMiembro,
+            ':id_curso' => $idCurso,
+            ':nota' => $nota,
+            ':fecha' => $fecha,
+            ':estado' => $estado
+        ]);
+    }
+
+    public function quitarMiembro(int $idCurso, int $idMiembro): bool
+    {
+        $sql = "DELETE FROM curso_miembro WHERE id_miembro = :id_miembro AND id_curso = :id_curso";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([
+            ':id_miembro' => $idMiembro,
+            ':id_curso' => $idCurso
+        ]);
+    }
+
+    public function calificarMiembro(int $idCurso, int $idMiembro, float $nota): bool
+    {
+        $estado = $nota >= 51 ? 'aprobado' : 'reprobado';
+
+        $sql = "UPDATE curso_miembro SET nota = :nota, estado = :estado 
+                WHERE id_miembro = :id_miembro AND id_curso = :id_curso";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([
+            ':nota' => $nota,
+            ':estado' => $estado,
+            ':id_miembro' => $idMiembro,
+            ':id_curso' => $idCurso
+        ]);
     }
 }

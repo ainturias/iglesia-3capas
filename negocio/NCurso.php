@@ -1,65 +1,83 @@
 <?php
 require_once(__DIR__ . '/../datos/DCurso.php');
-require_once(__DIR__ . '/../datos/DCursoMiembro.php');
 
 class NCurso
 {
-    private $dc;
-    private $dcm;
+    private DCurso $datos;
 
     public function __construct()
     {
-        $this->dc = new DCurso();
-        $this->dcm = new DCursoMiembro();
+        $this->datos = new DCurso();
     }
 
     public function listarCursos(): array
     {
-        return $this->dc->listar();
+        return $this->datos->listar();
+    }
+
+    public function crear(array $data): string
+    {
+        return $this->datos->insertar($data)
+            ? "Curso registrado correctamente."
+            : "Error al registrar el curso.";
+    }
+
+    public function editar(int $id, array $data): string
+    {
+        return $this->datos->editar($id, $data)
+            ? "Curso actualizado correctamente."
+            : "Error al actualizar el curso.";
+    }
+
+    public function eliminar(int $id): string
+    {
+        return $this->datos->eliminar($id)
+            ? "Curso eliminado correctamente."
+            : "No se pudo eliminar el curso. Verifica relaciones.";
     }
 
     public function obtenerPorId(int $id): ?array
     {
-        return $this->dc->obtenerPorId($id);
+        return $this->datos->obtenerPorId($id);
     }
 
-    public function crear(array $datos): bool
-    {
-        return $this->dc->crear($datos);
-    }
-
-    public function editar(int $id, array $datos): bool
-    {
-        return $this->dc->editar($id, $datos);
-    }
-
-    public function eliminar(int $id): bool
-    {
-        return $this->dc->eliminar($id);
-    }
+    // --- Asignación de miembros al curso (ahora dentro de DCurso) ---
 
     public function obtenerMiembrosAsignados(int $idCurso): array
     {
-        return $this->dcm->obtenerMiembrosAsignados($idCurso);
+        return $this->datos->obtenerMiembrosAsignados($idCurso);
     }
 
     public function obtenerMiembrosNoAsignados(int $idCurso): array
     {
-        return $this->dcm->obtenerMiembrosNoAsignados($idCurso);
+        return $this->datos->obtenerMiembrosNoAsignados($idCurso);
     }
 
-    public function asignarMiembro(int $idCurso, int $idMiembro, ?float $nota, ?string $fecha): bool
+    // public function asignarMiembro(int $idCurso, int $idMiembro, string $fecha = null): string
+    // {
+    //     return $this->datos->asignarMiembro($idCurso, $idMiembro, $fecha)
+    //         ? "Miembro asignado al curso."
+    //         : "Error al asignar miembro o ya está asignado.";
+    // }
+    public function asignarMiembro(int $idCurso, int $idMiembro, ?float $nota, string $fecha): string
     {
-        return $this->dcm->asignar($idCurso, $idMiembro, $nota, $fecha);
+        return $this->datos->asignarMiembro($idCurso, $idMiembro, $nota, $fecha)
+            ? "Miembro asignado al curso."
+            : "Error al asignar miembro o ya está asignado.";
     }
 
-    public function calificarMiembro(int $idCurso, int $idMiembro, float $nota): bool
+
+    public function quitarMiembro(int $idCurso, int $idMiembro): string
     {
-        return $this->dcm->actualizarNota($idCurso, $idMiembro, $nota);
+        return $this->datos->quitarMiembro($idCurso, $idMiembro)
+            ? "Miembro retirado del curso."
+            : "No se pudo retirar al miembro.";
     }
 
-    public function quitarMiembro(int $idCurso, int $idMiembro): bool
+    public function calificarMiembro(int $idCurso, int $idMiembro, float $nota): string
     {
-        return $this->dcm->quitar($idCurso, $idMiembro);
+        return $this->datos->calificarMiembro($idCurso, $idMiembro, $nota)
+            ? "Miembro calificado correctamente."
+            : "Error al calificar.";
     }
 }

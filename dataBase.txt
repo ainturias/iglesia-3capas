@@ -59,16 +59,38 @@ CREATE TABLE membresia (
     id_miembro INT NOT NULL,
     FOREIGN KEY (id_miembro) REFERENCES miembro(id_miembro) ON DELETE CASCADE
 );
-----------------------------------------------------------------------
-CREATE TABLE miembro_ministerio (
-    id_miembro INT,
-    id_ministerio INT,
-    fecha_ingreso DATE,
-    PRIMARY KEY (id_miembro, id_ministerio),
-    FOREIGN KEY (id_miembro) REFERENCES miembro(id_miembro),
-    FOREIGN KEY (id_ministerio) REFERENCES ministerio(id_ministerio)
+
+CREATE TABLE matrimonio (
+    id_matrimonio INT AUTO_INCREMENT PRIMARY KEY,
+    id_esposo INT NOT NULL,
+    id_esposa INT NOT NULL,
+    fecha DATE NOT NULL,
+    lugar VARCHAR(100),
+    testigos VARCHAR(255), -- Aquí están los nombres de los testigos
+    FOREIGN KEY (id_esposo) REFERENCES miembro(id_miembro),
+    FOREIGN KEY (id_esposa) REFERENCES miembro(id_miembro)
 );
------------------------------------------ INSERTS -------------------------------------------------------------
+
+CREATE TABLE sacramento (
+    id_sacramento INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion TEXT
+);
+
+CREATE TABLE sacramento_recibido (
+    id_miembro INT NOT NULL,
+    id_sacramento INT NOT NULL,
+    fecha DATE NOT NULL,
+    lugar VARCHAR(100),
+    PRIMARY KEY (id_miembro, id_sacramento),
+    FOREIGN KEY (id_miembro) REFERENCES miembro(id_miembro) ON DELETE CASCADE,
+    FOREIGN KEY (id_sacramento) REFERENCES sacramento(id_sacramento) ON DELETE CASCADE
+);
+
+***********************************************************************************************************************************
+********************************************** INSERTS ****************************************************************************
+***********************************************************************************************************************************
+
 INSERT INTO miembro (nombre, apellido, ci, fecha_nacimiento, direccion, telefono, correo, fecha_registro, estado) VALUES
 ('Alan', 'Romero', '1234567', '1995-04-12', 'Av. Siempre Viva 123', '78965412', 'alan.romero@mail.com', CURDATE(), 'activo'),
 ('Jimena', 'Lima', '2345678', '1998-06-22', 'Calle del Sol 456', '78912345', 'jimena.lima@mail.com', CURDATE(), 'activo'),
@@ -83,4 +105,3 @@ INSERT INTO curso (nombre, descripcion, nivel, fecha_inicio, fecha_fin) VALUES
 INSERT INTO ministerio (nombre, descripcion, fecha_creacion) VALUES
 ('Música', 'Ministerio de alabanza y música', '2020-01-01'),
 ('Oración', 'Grupo de intercesión y oración', '2021-02-15');
-

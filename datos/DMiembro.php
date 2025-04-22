@@ -13,7 +13,7 @@ class DMiembro
     public function listar(): array
     {
         $sql = "SELECT * FROM miembro";
-        $stmt = $this->conn->prepare($sql);
+        $stmt = $this->conn->prepare($sql);     //stmt = statement //declaracion de la consulta
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
