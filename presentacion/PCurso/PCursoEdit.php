@@ -7,16 +7,29 @@ class PCursoEdit extends PBase
     private NCurso $negocioCurso;
     private array $curso;
 
+    // Constructor: valida ID, carga curso, procesa el formulario y muestra la vista
     public function __construct()
     {
         parent::__construct("Editar Curso");
         $this->negocioCurso = new NCurso();
+        $this->validarIdEnviado();
+        $this->cargarCurso();
+        $this->procesarFormulario();
+        $this->mostrarVista();
+    }
 
+    // Verifica que el ID esté presente en la URL, redirige si no existe
+    private function validarIdEnviado(): void
+    {
         if (!isset($_GET['id'])) {
             header("Location: PCursoList.php?msg=" . urlencode("ID no especificado."));
             exit;
         }
+    }
 
+    // Obtiene los datos del curso según ID, redirige si no existe
+    private function cargarCurso(): void
+    {
         $id = (int) $_GET['id'];
         $this->curso = $this->negocioCurso->obtenerPorId($id);
 
@@ -24,11 +37,9 @@ class PCursoEdit extends PBase
             header("Location: PCursoList.php?msg=" . urlencode("Curso no encontrado."));
             exit;
         }
-
-        $this->procesarFormulario();
-        $this->mostrarVista();
     }
 
+    // Procesa el formulario de edición si fue enviado por POST
     private function procesarFormulario(): void
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -38,6 +49,7 @@ class PCursoEdit extends PBase
         }
     }
 
+    // Muestra el formulario con los datos actuales del curso
     private function mostrarVista(): void
     {
         $this->renderInicioCompleto();

@@ -19,7 +19,7 @@ class DCurso
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function insertar(array $data): bool
+    public function crear(array $data): bool
     {
         $sql = "INSERT INTO curso (nombre, descripcion, nivel, fecha_inicio, fecha_fin) 
                 VALUES (:nombre, :descripcion, :nivel, :fecha_inicio, :fecha_fin)";
@@ -65,28 +65,28 @@ class DCurso
     }
 
     // --- Lógica de curso_miembro ---
-    public function obtenerMiembrosAsignados(int $idCurso): array
-    {
-        $sql = "SELECT m.id_miembro, m.nombre, m.apellido, cm.nota, cm.fecha_inscripcion, cm.estado
-                FROM curso_miembro cm
-                INNER JOIN miembro m ON cm.id_miembro = m.id_miembro
-                WHERE cm.id_curso = :id";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([':id' => $idCurso]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+    // public function obtenerMiembrosAsignados(int $idCurso): array
+    // {
+    //     $sql = "SELECT m.id_miembro, m.nombre, m.apellido, cm.nota, cm.fecha_inscripcion, cm.estado
+    //             FROM curso_miembro cm
+    //             INNER JOIN miembro m ON cm.id_miembro = m.id_miembro
+    //             WHERE cm.id_curso = :id";
+    //     $stmt = $this->conn->prepare($sql);
+    //     $stmt->execute([':id' => $idCurso]);
+    //     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // }
 
-    public function obtenerMiembrosNoAsignados(int $idCurso): array
-    {
-        $sql = "SELECT m.id_miembro, m.nombre, m.apellido 
-                FROM miembro m
-                WHERE m.id_miembro NOT IN (
-                    SELECT id_miembro FROM curso_miembro WHERE id_curso = :id
-                )";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([':id' => $idCurso]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+    // public function obtenerMiembrosNoAsignados(int $idCurso): array
+    // {
+    //     $sql = "SELECT m.id_miembro, m.nombre, m.apellido 
+    //             FROM miembro m
+    //             WHERE m.id_miembro NOT IN (
+    //                 SELECT id_miembro FROM curso_miembro WHERE id_curso = :id
+    //             )";
+    //     $stmt = $this->conn->prepare($sql);
+    //     $stmt->execute([':id' => $idCurso]);
+    //     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // }
 
     public function asignarMiembro(int $idCurso, int $idMiembro, ?float $nota, string $fecha): bool
     {

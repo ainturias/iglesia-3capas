@@ -10,14 +10,14 @@ class NCurso
         $this->datos = new DCurso();
     }
 
-    public function listarCursos(): array
+    public function listar(): array
     {
         return $this->datos->listar();
     }
 
     public function crear(array $data): string
     {
-        return $this->datos->insertar($data)
+        return $this->datos->crear($data)
             ? "Curso registrado correctamente."
             : "Error al registrar el curso.";
     }
@@ -40,32 +40,18 @@ class NCurso
     {
         return $this->datos->obtenerPorId($id);
     }
+    
+    // ---------------------------------------------------------------------
+    
+
 
     // --- Asignación de miembros al curso (ahora dentro de DCurso) ---
-
-    public function obtenerMiembrosAsignados(int $idCurso): array
-    {
-        return $this->datos->obtenerMiembrosAsignados($idCurso);
-    }
-
-    public function obtenerMiembrosNoAsignados(int $idCurso): array
-    {
-        return $this->datos->obtenerMiembrosNoAsignados($idCurso);
-    }
-
-    // public function asignarMiembro(int $idCurso, int $idMiembro, string $fecha = null): string
-    // {
-    //     return $this->datos->asignarMiembro($idCurso, $idMiembro, $fecha)
-    //         ? "Miembro asignado al curso."
-    //         : "Error al asignar miembro o ya está asignado.";
-    // }
     public function asignarMiembro(int $idCurso, int $idMiembro, ?float $nota, string $fecha): string
     {
         return $this->datos->asignarMiembro($idCurso, $idMiembro, $nota, $fecha)
             ? "Miembro asignado al curso."
             : "Error al asignar miembro o ya está asignado.";
     }
-
 
     public function quitarMiembro(int $idCurso, int $idMiembro): string
     {

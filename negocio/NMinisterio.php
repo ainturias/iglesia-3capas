@@ -17,7 +17,7 @@ class NMinisterio
 
     public function crear(array $data): string
     {
-        return $this->datos->insertar($data)
+        return $this->datos->crear($data)
             ? "Ministerio registrado correctamente."
             : "Error al registrar ministerio.";
     }
@@ -42,7 +42,6 @@ class NMinisterio
     }
 
     // Gestión de asignaciones
-
     public function asignarMiembro(int $idMinisterio, int $idMiembro, string $fechaIngreso): bool
     {
         return $this->datos->asignarMiembro($idMinisterio, $idMiembro, $fechaIngreso);

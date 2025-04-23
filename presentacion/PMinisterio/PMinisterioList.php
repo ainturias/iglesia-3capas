@@ -11,11 +11,11 @@ class PMinisterioList extends PBase
     {
         parent::__construct("Listado de Ministerios");
         $this->negocioMinisterio = new NMinisterio();
-        $this->procesarAcciones();
+        $this->clickEliminar();
         $this->ministerios = $this->negocioMinisterio->listar();
     }
 
-    private function procesarAcciones(): void
+    private function clickEliminar(): void
     {
         if (isset($_GET['eliminar'])) {
             $id = (int) $_GET['eliminar'];
@@ -28,7 +28,7 @@ class PMinisterioList extends PBase
     public function mostrarVista(): void
     {
         $this->renderInicioCompleto();
-        ?>
+?>
 
         <h2>Listado de Ministerios</h2>
 
@@ -67,7 +67,7 @@ class PMinisterioList extends PBase
             </tbody>
         </table>
 
-        <?php
+<?php
         $this->renderFinCompleto();
     }
 }

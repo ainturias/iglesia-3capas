@@ -32,7 +32,7 @@ class PMiembroEdit extends PBase
     private function procesarFormulario(): void
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $mensaje = $this->negocioMiembro->editarMiembro($_GET['id'], $_POST);
+            $mensaje = $this->negocioMiembro->editar($_GET['id'], $_POST);
             header("Location: PMiembroList.php?msg=" . urlencode($mensaje));
             exit;
         }

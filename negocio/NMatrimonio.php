@@ -17,7 +17,7 @@ class NMatrimonio
 
     public function registrar(array $data): string
     {
-        return $this->datos->insertar($data)
+        return $this->datos->registrar($data)
             ? "Matrimonio registrado correctamente."
             : "Error al registrar el matrimonio.";
     }

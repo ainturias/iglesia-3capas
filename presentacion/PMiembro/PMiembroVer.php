@@ -32,7 +32,7 @@ class PMiembroVer extends PBase
     private function mostrarVista(): void
     {
         $this->renderInicioCompleto();
-        ?>
+?>
 
         <div class="card mb-4">
             <div class="card-header bg-primary text-white">
@@ -101,7 +101,7 @@ class PMiembroVer extends PBase
 
         <a href="PMiembroList.php" class="btn btn-secondary mt-3">← Volver al listado</a>
 
-        <?php
+<?php
         $this->renderFinCompleto();
     }
 }

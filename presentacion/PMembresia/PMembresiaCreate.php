@@ -14,7 +14,7 @@ class PMembresiaCreate extends PBase
         parent::__construct("Registrar Membresía");
         $this->negocioMembresia = new NMembresia();
         $this->negocioMiembro = new NMiembro();
-        $this->miembros = $this->negocioMiembro->listarMiembros();
+        $this->miembros = $this->negocioMiembro->listar();
 
         $this->procesarFormulario();
         $this->mostrarVista();

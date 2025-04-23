@@ -7,15 +7,17 @@ class PCursoList extends PBase
     private NCurso $negocioCurso;
     private array $cursos;
 
+    // Inicializa la vista, acciones y obtiene los cursos
     public function __construct()
     {
         parent::__construct("Listado de Cursos");
         $this->negocioCurso = new NCurso();
-        $this->procesarAcciones();
-        $this->cursos = $this->negocioCurso->listarCursos();
+        $this->clickEliminar();
+        $this->cursos = $this->negocioCurso->listar();
     }
 
-    private function procesarAcciones(): void
+    // Procesa acciones como la eliminación de cursos
+    private function clickEliminar(): void
     {
         if (isset($_GET['eliminar'])) {
             $id = (int) $_GET['eliminar'];
@@ -25,6 +27,7 @@ class PCursoList extends PBase
         }
     }
 
+    // Muestra la vista con el listado de cursos y opciones
     public function mostrarVista(): void
     {
         $this->renderInicioCompleto();
@@ -77,5 +80,6 @@ class PCursoList extends PBase
     }
 }
 
+// Instancia y renderiza la vista
 $vista = new PCursoList();
 $vista->mostrarVista();

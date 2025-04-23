@@ -17,7 +17,7 @@ class DMinisterio
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function insertar(array $data): bool
+    public function crear(array $data): bool
     {
         $sql = "INSERT INTO ministerio (nombre, descripcion, fecha_creacion) VALUES (?, ?, ?)";
         $stmt = $this->conn->prepare($sql);

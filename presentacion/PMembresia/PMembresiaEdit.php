@@ -8,14 +8,22 @@ class PMembresiaEdit extends PBase
     private NMembresia $negocioMembresia;
     private NMiembro $negocioMiembro;
     private array $membresia;
+    private array $miembro;
 
     public function __construct()
     {
         parent::__construct("Editar Membresía");
-
         $this->negocioMembresia = new NMembresia();
         $this->negocioMiembro = new NMiembro();
 
+        $this->validarMembresiaDesdeURL();
+        $this->procesarFormulario();
+        $this->mostrarVista();
+    }
+
+    // Valida el ID desde la URL y obtiene los datos de la membresía
+    private function validarMembresiaDesdeURL(): void
+    {
         if (!isset($_GET['id'])) {
             header("Location: PMembresiaList.php?msg=" . urlencode("ID no especificado."));
             exit;
@@ -29,23 +37,23 @@ class PMembresiaEdit extends PBase
             exit;
         }
 
-        $this->procesarFormulario();
-        $this->mostrarVista();
+        $this->miembro = $this->negocioMiembro->obtenerPorId($this->membresia['id_miembro']) ?? ['nombre' => 'Desconocido', 'apellido' => ''];
     }
 
+    // Procesa los cambios enviados desde el formulario
     private function procesarFormulario(): void
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $mensaje = $this->negocioMembresia->editar($_GET['id'], $_POST);
+            $mensaje = $this->negocioMembresia->editar($this->membresia['id_membresia'], $_POST);
             header("Location: PMembresiaList.php?msg=" . urlencode($mensaje));
             exit;
         }
     }
 
+    // Muestra el formulario con los datos existentes
     private function mostrarVista(): void
     {
         $this->renderInicioCompleto();
-        $miembros = $this->negocioMiembro->listarMiembros();
 ?>
 
         <h2>Editar Membresía</h2>
@@ -54,7 +62,7 @@ class PMembresiaEdit extends PBase
             <div class="col-md-6">
                 <label class="form-label">Miembro</label>
                 <input type="hidden" name="id_miembro" value="<?= $this->membresia['id_miembro'] ?>">
-                <input type="text" class="form-control" value="<?= htmlspecialchars($this->membresia['nombre'] . ' ' . $this->membresia['apellido']) ?>" readonly>
+                <input type="text" class="form-control" value="<?= htmlspecialchars($this->miembro['nombre'] . ' ' . $this->miembro['apellido']) ?>" readonly>
             </div>
 
             <div class="col-md-6">

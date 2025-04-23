@@ -1,21 +1,31 @@
 <?php
 require_once(__DIR__ . '/../PBase.php');
 require_once(__DIR__ . '/../../negocio/NMembresia.php');
+require_once(__DIR__ . '/../../negocio/NMiembro.php');
 
 class PMembresiaList extends PBase
 {
     private NMembresia $negocioMembresia;
+    private NMiembro $negocioMiembro;
     private array $membresias;
+    private array $miembrosPorId = [];
 
     public function __construct()
     {
         parent::__construct("Listado de Membresías");
         $this->negocioMembresia = new NMembresia();
-        $this->procesarAcciones();
+        $this->negocioMiembro = new NMiembro();
+
+        $this->clickEliminar();
         $this->membresias = $this->negocioMembresia->listar();
+
+        // Obtener todos los miembros una sola vez y asociarlos por ID
+        foreach ($this->negocioMiembro->listar() as $miembro) {
+            $this->miembrosPorId[$miembro['id_miembro']] = $miembro;
+        }
     }
 
-    private function procesarAcciones(): void
+    private function clickEliminar(): void
     {
         if (isset($_GET['eliminar'])) {
             $id = (int) $_GET['eliminar'];
@@ -54,9 +64,12 @@ class PMembresiaList extends PBase
             </thead>
             <tbody>
                 <?php foreach ($this->membresias as $m): ?>
+                    <?php
+                    $miembro = $this->miembrosPorId[$m['id_miembro']] ?? ['nombre' => 'Desconocido', 'apellido' => ''];
+                    ?>
                     <tr>
                         <td><?= $m['id_membresia'] ?></td>
-                        <td><?= htmlspecialchars($m['nombre'] . ' ' . $m['apellido']) ?></td>
+                        <td><?= htmlspecialchars($miembro['nombre'] . ' ' . $miembro['apellido']) ?></td>
                         <td><?= htmlspecialchars($m['tipo']) ?></td>
                         <td><?= $m['fecha_inicio'] ?></td>
                         <td><?= $m['fecha_fin'] ?? '-' ?></td>

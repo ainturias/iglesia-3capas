@@ -1,16 +1,19 @@
 <?php
 require_once(__DIR__ . '/../PBase.php');
 require_once(__DIR__ . '/../../negocio/NMatrimonio.php');
+require_once(__DIR__ . '/../../negocio/NMiembro.php');
 
 class PMatrimonioList extends PBase
 {
     private NMatrimonio $negocioMatrimonio;
+    private NMiembro $negocioMiembro;
     private array $matrimonios;
 
     public function __construct()
     {
         parent::__construct("Listado de Matrimonios");
         $this->negocioMatrimonio = new NMatrimonio();
+        $this->negocioMiembro = new NMiembro();
 
         $this->procesarAcciones();
         $this->matrimonios = $this->negocioMatrimonio->listar();
@@ -55,10 +58,14 @@ class PMatrimonioList extends PBase
             </thead>
             <tbody>
                 <?php foreach ($this->matrimonios as $m): ?>
+                    <?php
+                        $esposo = $this->negocioMiembro->obtenerPorId($m['id_esposo']);
+                        $esposa = $this->negocioMiembro->obtenerPorId($m['id_esposa']);
+                    ?>
                     <tr>
                         <td><?= $m['id_matrimonio'] ?></td>
-                        <td><?= htmlspecialchars($m['nombre_esposo']) ?></td>
-                        <td><?= htmlspecialchars($m['nombre_esposa']) ?></td>
+                        <td><?= htmlspecialchars($esposo['nombre'] . ' ' . $esposo['apellido']) ?></td>
+                        <td><?= htmlspecialchars($esposa['nombre'] . ' ' . $esposa['apellido']) ?></td>
                         <td><?= $m['fecha'] ?></td>
                         <td><?= $m['lugar'] ?></td>
                         <td><?= $m['testigos'] ?></td>

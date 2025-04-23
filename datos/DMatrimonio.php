@@ -10,21 +10,29 @@ class DMatrimonio
         $this->conn = Conexion::obtenerConexion();
     }
 
+    // public function listar(): array
+    // {
+    //     $sql = "SELECT m.id_matrimonio, m.id_esposo, m.id_esposa, 
+    //                    me1.nombre AS nombre_esposo, me1.apellido AS apellido_esposo,
+    //                    me2.nombre AS nombre_esposa, me2.apellido AS apellido_esposa,
+    //                    m.fecha, m.lugar, m.testigos
+    //             FROM matrimonio m
+    //             INNER JOIN miembro me1 ON m.id_esposo = me1.id_miembro
+    //             INNER JOIN miembro me2 ON m.id_esposa = me2.id_miembro";
+    //     $stmt = $this->conn->prepare($sql);
+    //     $stmt->execute();
+    //     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // }
     public function listar(): array
     {
-        $sql = "SELECT m.id_matrimonio, m.id_esposo, m.id_esposa, 
-                       me1.nombre AS nombre_esposo, me1.apellido AS apellido_esposo,
-                       me2.nombre AS nombre_esposa, me2.apellido AS apellido_esposa,
-                       m.fecha, m.lugar, m.testigos
-                FROM matrimonio m
-                INNER JOIN miembro me1 ON m.id_esposo = me1.id_miembro
-                INNER JOIN miembro me2 ON m.id_esposa = me2.id_miembro";
+        $sql = "SELECT id_matrimonio, id_esposo, id_esposa, fecha, lugar, testigos
+            FROM matrimonio";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function insertar(array $data): bool
+    public function registrar(array $data): bool
     {
         $sql = "INSERT INTO matrimonio (id_esposo, id_esposa, fecha, lugar, testigos) 
                 VALUES (:id_esposo, :id_esposa, :fecha, :lugar, :testigos)";

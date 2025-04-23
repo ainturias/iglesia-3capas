@@ -54,9 +54,13 @@ class DMiembro
 
     public function eliminar(int $id): bool
     {
-        $sql = "DELETE FROM miembro WHERE id_miembro = ?";
-        $stmt = $this->conn->prepare($sql);
-        return $stmt->execute([$id]);
+        try {
+            $sql = "DELETE FROM miembro WHERE id_miembro = :id";
+            $stmt = $this->conn->prepare($sql);
+            return $stmt->execute([':id' => $id]);
+        } catch (PDOException $e) {
+            return false;
+        }
     }
 
     public function obtenerPorId(int $id): ?array
@@ -68,7 +72,7 @@ class DMiembro
         return $resultado ?: null;
     }
 
-    public function obtenerCursosPorMiembro($id)
+    public function obtenerCursosPorMiembro(int $id): array
     {
         $sql = "SELECT c.nombre, cm.nota, cm.fecha_inscripcion
             FROM curso_miembro cm
@@ -79,7 +83,7 @@ class DMiembro
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function obtenerMinisteriosPorMiembro($id)
+    public function obtenerMinisteriosPorMiembro(int $id): array
     {
         $sql = "SELECT m.nombre, mm.fecha_ingreso
             FROM miembro_ministerio mm
@@ -87,6 +91,30 @@ class DMiembro
             WHERE mm.id_miembro = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // NUEVO DE CURSOS
+    public function listarNoAsignados(int $idCurso): array
+    {
+        $sql = "SELECT m.id_miembro, m.nombre, m.apellido 
+                FROM miembro m
+                WHERE m.id_miembro NOT IN (
+                    SELECT id_miembro FROM curso_miembro WHERE id_curso = :id
+                )";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':id' => $idCurso]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function listarAsignados(int $idCurso): array
+    {
+        $sql = "SELECT m.id_miembro, m.nombre, m.apellido, cm.nota, cm.fecha_inscripcion, cm.estado
+                FROM curso_miembro cm
+                INNER JOIN miembro m ON cm.id_miembro = m.id_miembro
+                WHERE cm.id_curso = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':id' => $idCurso]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

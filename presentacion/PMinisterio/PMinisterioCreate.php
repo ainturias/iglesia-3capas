@@ -27,7 +27,7 @@ class PMinisterioCreate extends PBase
     private function mostrarVista(): void
     {
         $this->renderInicioCompleto();
-        ?>
+?>
 
         <h2>Registrar Nuevo Ministerio</h2>
 
@@ -50,7 +50,7 @@ class PMinisterioCreate extends PBase
             </div>
         </form>
 
-        <?php
+<?php
         $this->renderFinCompleto();
     }
 }

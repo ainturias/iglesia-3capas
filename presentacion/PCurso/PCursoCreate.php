@@ -6,6 +6,7 @@ class PCursoCreate extends PBase
 {
     private NCurso $negocioCurso;
 
+    // Constructor: inicializa el formulario y procesa el registro si se envió
     public function __construct()
     {
         parent::__construct("Registrar Curso");
@@ -14,6 +15,7 @@ class PCursoCreate extends PBase
         $this->mostrarVista();
     }
 
+    // Procesa el envío del formulario y guarda el nuevo curso
     private function procesarFormulario(): void
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -31,10 +33,11 @@ class PCursoCreate extends PBase
         }
     }
 
+    // Muestra la vista con el formulario para registrar un curso
     private function mostrarVista(): void
     {
         $this->renderInicioCompleto();
-        ?>
+?>
 
         <h2>Registrar Nuevo Curso</h2>
 
@@ -65,9 +68,10 @@ class PCursoCreate extends PBase
             </div>
         </form>
 
-        <?php
+<?php
         $this->renderFinCompleto();
     }
 }
 
+// Instancia la vista y ejecuta el flujo
 new PCursoCreate();

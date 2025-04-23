@@ -11,10 +11,23 @@ class PMiembroList extends PBase
     {
         parent::__construct("Listado de Miembros");
         $this->negocioMiembro = new NMiembro();
-        $this->miembros = $this->negocioMiembro->listarMiembros();
+
+        $this->clickEliminar(); // Mueve antes de listar
+        $this->miembros = $this->negocioMiembro->listar();
     }
 
-    public function mostrarVista()
+    public function clickEliminar(): void
+    {
+        if (isset($_GET['eliminar'])) {
+            $id = (int)$_GET['eliminar'];
+            $mensaje = $this->negocioMiembro->eliminar($id);
+            header("Location: PMiembroList.php?msg=" . urlencode($mensaje));
+            exit;
+        }
+    }
+
+    // Renderiza la vista principal
+    public function mostrarVista(): void
     {
         $this->renderInicioCompleto();
 ?>
@@ -24,6 +37,10 @@ class PMiembroList extends PBase
         <div class="mb-3">
             <a href="PMiembroCreate.php" class="btn btn-success">Registrar Nuevo Miembro</a>
         </div>
+
+        <?php if (isset($_GET['msg'])): ?>
+            <div class="alert alert-info"><?= htmlspecialchars($_GET['msg']) ?></div>
+        <?php endif; ?>
 
         <table class="table table-striped table-bordered">
             <thead class="table-dark">
@@ -51,10 +68,6 @@ class PMiembroList extends PBase
                             <a href="PMiembroEdit.php?id=<?= $miembro['id_miembro'] ?>" class="btn btn-warning btn-sm">Editar</a>
                             <a href="PMiembroList.php?eliminar=<?= $miembro['id_miembro'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Está seguro de eliminar este miembro?')">Eliminar</a>
                         </td>
-                        <!-- <td>
-                            <a href="PMiembroEdit.php?id=<?= $miembro['id_miembro'] ?>" class="btn btn-warning btn-sm">Editar</a>
-                            <a href="PMiembroList.php?eliminar=<?= $miembro['id_miembro'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Está seguro de eliminar este miembro?')">Eliminar</a>
-                        </td> -->
                     </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -63,18 +76,8 @@ class PMiembroList extends PBase
 <?php
         $this->renderFinCompleto();
     }
-
-    public function procesarAcciones(): void
-    {
-        if (isset($_GET['eliminar'])) {
-            $id = $_GET['eliminar'];
-            $this->negocioMiembro->eliminarMiembro($id);
-            header("Location: PMiembroList.php?msg=" . urlencode("Miembro eliminado correctamente."));
-            exit;
-        }
-    }
 }
 
+// Instancia y ejecuta directamente la vista
 $vista = new PMiembroList();
-$vista->procesarAcciones();
 $vista->mostrarVista();

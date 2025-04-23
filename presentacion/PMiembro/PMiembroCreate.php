@@ -17,7 +17,7 @@ class PMiembroCreate extends PBase
     private function procesarFormulario(): void
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $mensaje = $this->negocioMiembro->registrarMiembro($_POST);
+            $mensaje = $this->negocioMiembro->registrar($_POST);
             header("Location: PMiembroList.php?msg=" . urlencode($mensaje));
             exit;
         }

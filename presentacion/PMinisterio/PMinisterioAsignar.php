@@ -54,7 +54,7 @@ class PMinisterioAsignar extends PBase
         $this->mostrarVista();
     }
 
-    private function mostrarVista()
+    private function mostrarVista(): void
     {
         $this->renderInicioCompleto();
 ?>

@@ -31,7 +31,7 @@ class PMatrimonioCreate extends PBase
     private function mostrarVista(): void
     {
         $this->renderInicioCompleto();
-        $miembros = $this->negocioMiembro->listarMiembros();
+        $miembros = $this->negocioMiembro->listar();
         ?>
 
         <h2>Registrar Matrimonio</h2>
